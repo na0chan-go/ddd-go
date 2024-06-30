@@ -2,12 +2,12 @@ package model
 
 // fullName struct
 type fullName struct {
-	firstName string
-	lastName  string
+	firstName Name
+	lastName  Name
 }
 
-// NewFullName constructor
-func NewFullName(firstName, lastName string) *fullName {
+// NewFullName コンストラクタ
+func NewFullName(firstName Name, lastName Name) *fullName {
 	return &fullName{
 		firstName: firstName,
 		lastName:  lastName,
@@ -15,12 +15,12 @@ func NewFullName(firstName, lastName string) *fullName {
 }
 
 // FirstName getter
-func (f *fullName) FirstName() string {
+func (f *fullName) FirstName() Name {
 	return f.firstName
 }
 
 // LastName getter
-func (f *fullName) LastName() string {
+func (f *fullName) LastName() Name {
 	return f.lastName
 }
 
