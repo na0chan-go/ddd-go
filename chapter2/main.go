@@ -1,8 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 func main() {
 	fullName := "John Doe"
-	fmt.Println(fullName) // John Doeが表示される
+	token := strings.Split(fullName, " ")
+	firstName := token[0]
+	fmt.Println(firstName) // John
 }
