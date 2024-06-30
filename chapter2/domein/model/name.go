@@ -1,26 +1,25 @@
 package model
 
-import "regexp"
+import (
+	"errors"
+	"regexp"
+)
 
 // Name 姓、名を表す値オブジェクト
 type Name string
 
 // NewName コンストラクタ
-func NewName(name string) Name {
-	if !Name(name).ValidateName(name) {
-		return Name("")
+func NewName(name string) (Name, error) {
+	// 姓、名が空文字かどうかを判定する
+	if name == "" {
+		return Name(""), errors.New("名前が空です。")
 	}
-	return Name(name)
-}
 
-// Value 姓、名を取得する
-func (n Name) Value() string {
-	return string(n)
-}
-
-// IsNullOrEmpty 姓、名が空かどうかを判定する
-func (n Name) IsNullOrEmpty() bool {
-	return n == ""
+	// 名前が正しいかどうかを判定する
+	if !Name(name).ValidateName(name) {
+		return Name(""), errors.New("名前が不正です。")
+	}
+	return Name(name), nil
 }
 
 // ValidateName 姓、名が正しいかどうかを判定する

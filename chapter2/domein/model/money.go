@@ -1,5 +1,7 @@
 package model
 
+import "errors"
+
 type money struct {
 	amount   int
 	currency string
@@ -24,9 +26,9 @@ func (m *money) Currency() string {
 }
 
 // Add 金額を加算する
-func (m *money) Add(other *money) *money {
+func (m *money) Add(other *money) (*money, error) {
 	if m.currency != other.currency {
-		return nil
+		return nil, errors.New("通貨が異なります。")
 	}
-	return NewMoney(m.amount+other.amount, m.currency)
+	return NewMoney(m.amount+other.amount, m.currency), nil
 }

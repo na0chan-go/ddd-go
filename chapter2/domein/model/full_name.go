@@ -14,16 +14,6 @@ func NewFullName(firstName Name, lastName Name) *fullName {
 	}
 }
 
-// FirstName getter
-func (f *fullName) FirstName() Name {
-	return f.firstName
-}
-
-// LastName getter
-func (f *fullName) LastName() Name {
-	return f.lastName
-}
-
 // Equals フルネームを比較する
 func (f *fullName) Equals(other *fullName) bool {
 	if other == nil {
