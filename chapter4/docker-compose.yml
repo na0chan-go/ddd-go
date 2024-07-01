@@ -1,0 +1,31 @@
+services:
+  app:
+    container_name: go
+    build: 
+      context: .
+      dockerfile: ./docker/go/Dockerfile
+    tty: true
+    volumes:
+      - type: bind
+        source: ./migrations
+        target: /go/src/app/migrations
+    environment:
+      - DB_HOST=postgres
+      - DB_NAME=${DB_NAME:-testpostgres}
+      - DB_USER=${DB_USER:-na0chan}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - DB_PORT=${DB_PORT:-5432}
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: postgres-container
+    build: 
+      context: .
+      dockerfile: ./docker/postgres/Dockerfile
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-na0chan}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-testpostgres}
