@@ -31,7 +31,6 @@ func (s *UserService) Exists(user *User) (bool, error) {
 		}
 	}()
 
-	// ここでユーザが存在するかどうかを確認するロジックを実装する
 	rows, err := tx.Query("SELECT * FROM users WHERE username = $1", user.UserName())
 	if err != nil {
 		return false, fmt.Errorf("failed to userService.Exists(): %w", err)
