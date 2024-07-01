@@ -8,3 +8,5 @@ migration:
 	docker compose exec app bash db-migration.sh
 run:
 	docker compose exec app go run main.go
+test:
+	docker compose exec app go test -v ./...
