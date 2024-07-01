@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/na0chan-go/learn-ddd-go/chapter2/domein/model"
+	"github.com/na0chan-go/ddd-go/chapter2/domain/model"
 )
 
 func main() {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/na0chan-go/learn-ddd-go/chapter3/domain/model/user"
+	"github.com/na0chan-go/ddd-go/chapter3/domain/model/user"
 )
 
 func main() {
