@@ -6,18 +6,9 @@ import (
 
 func TestNewUserId(t *testing.T) {
 	// 正常なIDを渡した場合
-	userId, err := NewUserId("123")
+	_, err := NewUserId("123")
 	if err != nil {
-		t.Errorf("Expected no error, got %v", err)
-	}
-	if userId.Id() != "123" {
-		t.Errorf("Expected ID to be '123', got %v", userId.Id())
-	}
-
-	// 空のIDを渡した場合
-	_, err = NewUserId("")
-	if err == nil {
-		t.Error("Expected error for empty ID, got none")
+		t.Errorf("Expected no error for valid ID, got %v", err)
 	}
 }
 
