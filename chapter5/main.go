@@ -27,24 +27,34 @@ func main() {
 	log.Println("Successfully connected to database")
 
 	// ユーザを作成する
-	err = CreateUser(db, "root")
+	err = CreateUser(db, "1", "na0chan-go")
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
 // CreateUser ユーザを作成する
-func CreateUser(db *sql.DB, name string) error {
+func CreateUser(db *sql.DB, id, name string) error {
 	userName, err := user.NewUserName(name)
 	if err != nil {
 		return err
 	}
-	newUser, err := user.NewUser(*userName)
+	userId, err := user.NewUserId(id)
 	if err != nil {
 		return err
 	}
 
-	userService, err := user.NewUserService(db)
+	newUser, err := user.NewUser(*userId, *userName)
+	if err != nil {
+		return err
+	}
+
+	userRepository, err := user.NewUserRepository(db)
+	if err != nil {
+		return err
+	}
+
+	userService, err := user.NewUserService(userRepository)
 	if err != nil {
 		return err
 	}
@@ -54,31 +64,15 @@ func CreateUser(db *sql.DB, name string) error {
 		return err
 	}
 
-	tx, err := db.Begin()
-	if err != nil {
-		return err
-	}
-
-	// トランザクションの終了処理
-	defer func() {
-		switch err {
-		case nil:
-			err = tx.Commit()
-		default:
-			tx.Rollback()
-		}
-	}()
-
 	// 既にユーザが存在する場合はエラーを返す
 	if isExists {
 		return fmt.Errorf(("failed to main.CreateUser(): user already exists"))
 	}
 
-	// ここでユーザを登録するロジックを実装する
-	_, err = tx.Exec("INSERT INTO users (id, username) VALUES ($1, $2)", newUser.UserId(), newUser.UserName())
-	if err != nil {
-		return fmt.Errorf("failed to main.CreateUser(): %w", err)
+	if err := userRepository.Save(newUser); err != nil {
+		return err
 	}
+
 	log.Println("Successfully created user")
 	return nil
 }

@@ -7,26 +7,18 @@ import (
 
 // UserName ユーザ名
 type UserName struct {
-	name string
+	value string
 }
 
 // NewUserName ユーザ名を生成する
-func NewUserName(name string) (*UserName, error) {
-	if name == "" {
-		return nil, fmt.Errorf("name is required")
+func NewUserName(value string) (*UserName, error) {
+	if len(value) < 3 {
+		return nil, fmt.Errorf("name must be at least 3 characters long, got '%s'", value)
 	}
-	if len(name) < 3 {
-		return nil, fmt.Errorf("name must be at least 3 characters long, got '%s'", name)
-	}
-	return &UserName{name: name}, nil
-}
-
-// Name ユーザ名を取得する
-func (u *UserName) Name() string {
-	return u.name
+	return &UserName{value: value}, nil
 }
 
 // Equals ユーザ名が同じかどうか
 func (u *UserName) Equals(target *UserName) bool {
-	return reflect.DeepEqual(u.name, target.name)
+	return reflect.DeepEqual(u.value, target.value)
 }
