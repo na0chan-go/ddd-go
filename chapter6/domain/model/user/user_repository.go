@@ -10,6 +10,7 @@ import (
 type UserRepositoryInterface interface {
 	FindByUserName(name *UserName) (*User, error)
 	FindByUserId(id *UserId) (*User, error)
+	FindByMailAddress(mailAddress *MailAddress) (*User, error)
 	Save(user *User) error
 	Delete(user *User) error
 }
@@ -123,6 +124,48 @@ func (r *UserRepository) FindByUserId(id *UserId) (*User, error) {
 			return nil, err
 		}
 		user = &User{id: *userId, name: *userName, mailAddress: *mailAddress}
+	}
+
+	err = rows.Err()
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+// FindByMailAddress メールアドレスからユーザを取得する
+func (r *UserRepository) FindByMailAddress(mailAddress *MailAddress) (*User, error) {
+	tx, err := r.db.Begin()
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		switch err {
+		case nil:
+			err = tx.Commit()
+		default:
+			tx.Rollback()
+		}
+	}()
+
+	rows, err := tx.Query("SELECT * FROM users WHERE mail_address = $1", mailAddress.value)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	userId := &UserId{}
+	userName := &UserName{}
+	email := &MailAddress{}
+	var user *User
+	// ユーザが存在する場合はユーザを返す
+	if rows.Next() {
+		err := rows.Scan(&userId.value, &userName.value, &email.value)
+		if err != nil {
+			return nil, err
+		}
+		user = &User{id: *userId, name: *userName, mailAddress: *email}
 	}
 
 	err = rows.Err()

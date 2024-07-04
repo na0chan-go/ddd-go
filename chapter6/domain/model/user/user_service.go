@@ -12,9 +12,11 @@ func NewUserService(userRepository UserRepositoryInterface) (*UserService, error
 
 // Exists ユーザが存在するかどうかを確認する
 func (s *UserService) Exists(user *User) (bool, error) {
-	user, err := s.userRepository.FindByUserName(user.Name())
+	// 重複のルールをユーザ名からメールアドレスに変更
+	// user, err := s.userRepository.FindByUserName(user.Name())
+	duplicateUser, err := s.userRepository.FindByMailAddress(user.MailAddress())
 	if err != nil {
 		return false, err
 	}
-	return user != nil, nil
+	return duplicateUser != nil, nil
 }

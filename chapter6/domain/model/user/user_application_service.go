@@ -17,17 +17,18 @@ func NewUserApplicationService(_userRepository UserRepositoryInterface, _userSer
 }
 
 // Register ユーザを登録する
-func (s *UserApplicationService) Register(name string) error {
+func (s *UserApplicationService) Register(name string, rawMailAddress string) error {
+	userId, err := NewUserId("123")
+	if err != nil {
+		return err
+	}
 
 	userName, err := NewUserName(name)
 	if err != nil {
 		return err
 	}
-	userId, err := NewUserId("123")
-	if err != nil {
-		return err
-	}
-	mailAddress, err := NewMailAddress("example@example.com")
+
+	mailAddress, err := NewMailAddress(rawMailAddress)
 	if err != nil {
 		return err
 	}
@@ -102,11 +103,11 @@ func (s *UserApplicationService) Update(command UserUpdateCommand) error {
 	}
 	mailAddress := command.MailAddress
 	if mailAddress != "" {
-		mailAddress, err := NewMailAddress(mailAddress)
+		newMailAddress, err := NewMailAddress(mailAddress)
 		if err != nil {
 			return err
 		}
-		user.ChangeMailAddress(*mailAddress)
+		user.ChangeMailAddress(*newMailAddress)
 	}
 
 	err = s.userRepository.Save(user)
