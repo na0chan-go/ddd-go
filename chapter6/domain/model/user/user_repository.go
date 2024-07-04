@@ -11,6 +11,7 @@ type UserRepositoryInterface interface {
 	FindByUserName(name *UserName) (*User, error)
 	FindByUserId(id *UserId) (*User, error)
 	Save(user *User) error
+	Delete(user *User) error
 }
 
 // UserRepository ユーザリポジトリ
@@ -130,4 +131,27 @@ func (r *UserRepository) FindByUserId(id *UserId) (*User, error) {
 	}
 
 	return user, nil
+}
+
+// Delete ユーザを削除する
+func (r *UserRepository) Delete(user *User) error {
+	tx, err := r.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		switch err {
+		case nil:
+			err = tx.Commit()
+		default:
+			tx.Rollback()
+		}
+	}()
+
+	_, err = tx.Exec("DELETE FROM users WHERE id = $1", user.id.value)
+	if err != nil {
+		return err
+	}
+	return nil
 }

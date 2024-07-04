@@ -116,3 +116,28 @@ func (s *UserApplicationService) Update(command UserUpdateCommand) error {
 
 	return nil
 }
+
+// Delete ユーザを削除する
+func (s *UserApplicationService) Delete(command UserDeleteCommand) error {
+	targetId, err := NewUserId(command.UserId)
+	if err != nil {
+		return err
+	}
+	user, err := s.userRepository.FindByUserId(targetId)
+	if err != nil {
+		return err
+	}
+
+	// ユーザが存在しない場合は退会成功とする
+	if user == nil {
+		return nil
+	}
+
+	err = s.userRepository.Delete(user)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
