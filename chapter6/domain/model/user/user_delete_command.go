@@ -1,5 +1,5 @@
 package user
 
 type UserDeleteCommand struct {
-	UserId string
+	Id string
 }

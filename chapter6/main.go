@@ -26,57 +26,25 @@ func main() {
 	}
 	log.Println("Successfully connected to database")
 
-	// ユーザを作成する
-	err = CreateUser(db, "1", "na0chan-go", "example@example.com")
+	userRepository, err := user.NewUserRepository(db)
 	if err != nil {
 		log.Fatal(err)
 	}
-}
-
-// CreateUser ユーザを作成する
-func CreateUser(db *sql.DB, id, name, email string) error {
-	userName, err := user.NewUserName(name)
-	if err != nil {
-		return err
-	}
-	userId, err := user.NewUserId(id)
-	if err != nil {
-		return err
-	}
-	mailAddress, err := user.NewMailAddress(email)
-	if err != nil {
-		return err
-	}
-
-	newUser, err := user.NewUser(*userId, *userName, *mailAddress)
-	if err != nil {
-		return err
-	}
-
-	userRepository, err := user.NewUserRepository(db)
-	if err != nil {
-		return err
-	}
-
 	userService, err := user.NewUserService(userRepository)
 	if err != nil {
-		return err
+		log.Fatal(err)
 	}
-
-	isExists, err := userService.Exists(newUser)
+	userRegisterService, err := user.NewUserRegisterService(userRepository, *userService)
 	if err != nil {
-		return err
+		log.Fatal(err)
 	}
 
-	// 既にユーザが存在する場合はエラーを返す
-	if isExists {
-		return fmt.Errorf(("failed to main.CreateUser(): user already exists"))
+	// ユーザを作成する
+	err = userRegisterService.Handle(user.UserRegisterCommand{
+		Name:        "na0chan-go",
+		MailAddress: "example@example.com",
+	})
+	if err != nil {
+		log.Fatal(err)
 	}
-
-	if err := userRepository.Save(newUser); err != nil {
-		return err
-	}
-
-	log.Println("Successfully created user")
-	return nil
 }
